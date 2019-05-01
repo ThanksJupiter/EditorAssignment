@@ -29,8 +29,35 @@ public class CircleEditor : EditorWindow
 
     void OnSceneGUI(SceneView sceneView)
     {
+        if (renderer == null)
+        {
+            renderer = GameObject.Find("RenderObject").GetComponent<LineRenderer>();
+        }
+
         HandleRadius();
         HandleSegments();
+
+        points = new Vector3[segments + 1];
+
+        float deltaTheta = (Mathf.PI * 2) / segments;
+        float theta = 0;
+
+        for (int i = 0; i < segments + 1; i++)
+        {
+            theta += deltaTheta;
+            points[i] = new Vector3(radius * Mathf.Cos(theta), 0f, radius * Mathf.Sin(theta));
+        }
+
+        renderer.SetPositions(points);
+        renderer.positionCount = points.Length;
+    }
+
+    private void OnGUI()
+    {
+        if (renderer == null)
+        {
+            renderer = GameObject.Find("RenderObject").GetComponent<LineRenderer>();
+        }
 
         renderer = (LineRenderer)EditorGUILayout.ObjectField(renderer, (typeof(LineRenderer)), true);
 
